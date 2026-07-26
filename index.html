@@ -3,160 +3,279 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AFI.Entertainment - Official Free OTT Platform</title>
+  <title>AFI.Entertainment - Official OTT Platform</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
     body { background-color: #141414; color: #fff; overflow-x: hidden; }
 
-    /* Modern Glassmorphic Navbar */
-    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 5%; background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, transparent 100%); position: fixed; top: 0; width: 100%; z-index: 100; }
-    .logo { color: #E50914; font-size: 1.6rem; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
-    .search-bar { background: rgba(0,0,0,0.7); border: 1px solid #444; padding: 7px 14px; border-radius: 20px; color: #fff; outline: none; font-size: 0.85rem; width: 130px; }
+    /* ================= LOGIN MODAL SYSTEM ================= */
+    .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .auth-box { background: rgba(0,0,0,0.85); border: 1px solid #333; padding: 40px 30px; border-radius: 8px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
+    .auth-logo { color: #E50914; font-size: 2rem; font-weight: 900; text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
+    .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #333; }
+    .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; color: #888; font-weight: bold; }
+    .auth-tab.active { color: #fff; border-bottom: 2px solid #E50914; }
+    .auth-box input { width: 100%; padding: 14px; margin-bottom: 14px; background: #333; border: 1px solid #444; color: #fff; border-radius: 4px; outline: none; font-size: 0.9rem; }
+    .auth-box input:focus { border-color: #E50914; background: #444; }
+    .auth-btn { width: 100%; padding: 14px; background: #E50914; color: #fff; border: none; font-size: 1rem; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; }
 
-    /* Netflix-Style Hero Section */
+    /* ================= MAIN OTT PLATFORM ================= */
+    .main-app { display: none; } /* Locked until login */
+
+    /* Navbar */
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(0,0,0,0.95); position: fixed; top: 0; width: 100%; z-index: 100; border-bottom: 1px solid #222; }
+    .logo-box { display: flex; align-items: center; gap: 10px; }
+    .logo { color: #E50914; font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+    .sub-brand { font-size: 0.65rem; background: #222; color: #aaa; padding: 2px 6px; border-radius: 3px; border: 1px solid #333; }
+    .search-bar { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 6px 14px; border-radius: 20px; color: #fff; outline: none; font-size: 0.85rem; width: 140px; transition: 0.3s; }
+    .search-bar:focus { border-color: #E50914; width: 180px; }
+    .user-profile { background: #E50914; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+
+    /* Hero Banner */
     .hero { 
-      min-height: 80vh; 
-      background: linear-gradient(180deg, rgba(20,20,20,0.2) 0%, rgba(20,20,20,0.8) 70%, #141414 100%), 
+      min-height: 70vh; 
+      background: linear-gradient(180deg, rgba(20,20,20,0.1) 0%, rgba(20,20,20,0.9) 80%, #141414 100%), 
                   url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1200') center/cover no-repeat; 
       display: flex; 
       flex-direction: column; 
       justify-content: flex-end; 
-      padding: 0 5% 30px 5%; 
+      padding: 90px 5% 30px 5%; 
     }
-    .hero-badge { background: #E50914; color: #fff; font-size: 0.7rem; font-weight: bold; padding: 4px 8px; border-radius: 3px; width: fit-content; margin-bottom: 10px; letter-spacing: 1px; }
-    .hero-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 10px; line-height: 1.1; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
-    .hero-desc { max-width: 550px; font-size: 0.9rem; color: #ddd; margin-bottom: 18px; line-height: 1.4; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
-    .hero-buttons { display: flex; gap: 10px; }
-    .btn { padding: 10px 22px; font-size: 0.9rem; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .hero-badge { background: #E50914; color: #fff; font-size: 0.65rem; font-weight: bold; padding: 3px 8px; border-radius: 3px; width: fit-content; margin-bottom: 8px; letter-spacing: 1px; }
+    .hero-title { font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; line-height: 1.1; }
+    .hero-desc { max-width: 500px; font-size: 0.85rem; color: #ccc; margin-bottom: 18px; line-height: 1.4; }
+    .btn { padding: 10px 22px; font-size: 0.85rem; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .btn-primary { background-color: #fff; color: #000; }
-    .btn-secondary { background-color: rgba(109, 109, 110, 0.7); color: #fff; backdrop-filter: blur(5px); }
+    .btn-secondary { background-color: rgba(109, 109, 110, 0.7); color: #fff; }
 
-    /* Content Showcase Section */
+    /* Content Showcase Rows */
     .content-section { padding: 10px 0 30px 5%; }
-    .row-title { font-size: 1.25rem; font-weight: 700; margin: 25px 0 12px 0; color: #fff; }
-    
-    /* Horizontal Scrolling Vertical Poster Cards */
+    .row-title { font-size: 1.15rem; font-weight: 800; margin: 25px 0 12px 0; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .row-title span { font-size: 0.75rem; color: #E50914; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Horizontal Scrolling Poster Cards */
     .cards-row { display: flex; gap: 12px; overflow-x: auto; padding-right: 5%; scroll-behavior: smooth; }
     .cards-row::-webkit-scrollbar { display: none; }
     
     .poster-card { 
-      min-width: 140px; 
-      height: 210px; 
+      min-width: 135px; 
+      height: 200px; 
       background: #222; 
       border-radius: 6px; 
       overflow: hidden; 
       position: relative; 
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      border: 1px solid #2a2a2a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      border: 1px solid #282828;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
+    .poster-card:hover { transform: scale(1.03); border-color: #E50914; }
     .poster-card img { width: 100%; height: 100%; object-fit: cover; }
     .poster-overlay { 
       position: absolute; 
       bottom: 0; 
       width: 100%; 
-      padding: 10px 8px; 
+      padding: 12px 8px 8px 8px; 
       background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, transparent 100%); 
       display: flex;
       flex-direction: column;
     }
     .poster-tag { font-size: 0.55rem; color: #E50914; font-weight: 800; text-transform: uppercase; }
-    .poster-title { font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .poster-title { font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .poster-sub { font-size: 0.65rem; color: #888; }
 
-    /* Creator Rules & Submission Form */
-    .submission-wrapper { background: #181818; padding: 35px 5%; border-top: 2px solid #222; margin-top: 20px; }
-    .form-box { background: #0f0f0f; padding: 22px; border-radius: 8px; border: 1px solid #2a2a2a; margin-top: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-    .form-box input { width: 100%; padding: 12px; margin-bottom: 12px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
-    .form-box input:focus { border-color: #E50914; outline: none; }
+    /* Video Play Modal */
+    .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+    .modal-content { background: #181818; width: 100%; max-width: 500px; border-radius: 8px; overflow: hidden; border: 1px solid #333; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .modal-header { height: 220px; background-size: cover; background-position: center; position: relative; display: flex; align-items: flex-end; padding: 15px; }
+    .modal-close { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+    .modal-body { padding: 20px; }
+    .modal-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 5px; }
+    .modal-desc { font-size: 0.85rem; color: #aaa; margin-bottom: 20px; line-height: 1.4; }
+
+    /* Creator Submission Form */
+    .submission-wrapper { background: #111; padding: 35px 5%; border-top: 2px solid #222; margin-top: 20px; }
+    .form-box { background: #181818; padding: 22px; border-radius: 8px; border: 1px solid #282828; margin-top: 15px; }
+    .form-box input, .form-box select { width: 100%; padding: 12px; margin-bottom: 12px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
     
-    footer { padding: 30px 5%; background-color: #080808; color: #666; font-size: 0.8rem; text-align: center; border-top: 1px solid #1c1c1c; }
+    footer { padding: 30px 5%; background-color: #080808; color: #777; font-size: 0.8rem; text-align: center; border-top: 1px solid #1c1c1c; }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo">AFI.Ent</div>
-    <input type="text" class="search-bar" placeholder="🔍 Search...">
-  </nav>
+  <!-- SIGN IN / SIGN UP SYSTEM -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-box">
+      <div class="auth-logo">AFI.ENT</div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="loginTab" onclick="switchTab('login')">Sign In</div>
+        <div class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</div>
+      </div>
 
-  <!-- Hero Banner -->
-  <header class="hero">
-    <span class="hero-badge">AFI FEATURED</span>
-    <h1 class="hero-title">Action Film Industry</h1>
-    <p class="hero-desc">The official home for independent movies, short films & web series. Stream anywhere for free.</p>
-    <div class="hero-buttons">
-      <button class="btn btn-primary">▶ Play Now</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('rules').scrollIntoView({behavior: 'smooth'});">+ Submit Film</button>
-    </div>
-  </header>
-
-  <!-- Movies & Shows Categories -->
-  <main class="content-section">
-    
-    <h2 class="row-title">🔥 Trending Originals</h2>
-    <div class="cards-row">
-      <div class="poster-card">
-        <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400" alt="Poster">
-        <div class="poster-overlay"><span class="poster-tag">Original</span><span class="poster-title">Coming Soon</span></div>
-      </div>
-      <div class="poster-card">
-        <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400" alt="Poster">
-        <div class="poster-overlay"><span class="poster-tag">Original</span><span class="poster-title">Coming Soon</span></div>
-      </div>
-      <div class="poster-card">
-        <img src="https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=400" alt="Poster">
-        <div class="poster-overlay"><span class="poster-tag">Original</span><span class="poster-title">Coming Soon</span></div>
-      </div>
-      <div class="poster-card">
-        <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=400" alt="Poster">
-        <div class="poster-overlay"><span class="poster-tag">Original</span><span class="poster-title">Slot Open</span></div>
-      </div>
-    </div>
-
-    <h2 class="row-title">🎬 Web Series Showcase</h2>
-    <div class="cards-row">
-      <div class="poster-card">
-        <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=400" alt="Poster">
-        <div class="poster-overlay"><span class="poster-tag">Series</span><span class="poster-title">Episode 1</span></div>
-      </div>
-      <div class="poster-card">
-        <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=400" alt="Poster">
-        <div class="poster-overlay"><span class="poster-tag">Series</span><span class="poster-title">Episode 2</span></div>
-      </div>
-      <div class="poster-card">
-        <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400" alt="Poster">
-        <div class="poster-overlay"><span class="poster-tag">Series</span><span class="poster-title">Episode 3</span></div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- Creator Submission Form -->
-  <section class="submission-wrapper" id="rules">
-    <h2 style="color: #E50914; font-size: 1.4rem; text-align: center; font-weight: 800;">Submit Your Project</h2>
-    <p style="color: #aaa; text-align: center; font-size: 0.85rem; margin-top: 5px;">Submit your film or web series for publishing on AFI.Entertainment.</p>
-    
-    <div class="form-box">
-      <h3 style="color: #fff; font-size: 1rem; margin-bottom: 10px;">📋 Submission Rules:</h3>
-      <p style="color: #bbb; font-size: 0.8rem; line-height: 1.6; margin-bottom: 15px;">
-        • Only original independent content.<br>
-        • Quality must be HD (720p/1080p).<br>
-        • Verified & approved by AFI Admin before publishing.
-      </p>
-
-      <form onsubmit="event.preventDefault(); alert('Submission Received! AFI Admin will contact you soon.');">
-        <input type="text" placeholder="Production / Director Name" required>
-        <input type="text" placeholder="Movie / Web Series Title" required>
-        <input type="url" placeholder="Video Link (YouTube / Drive)" required>
-        <button type="submit" style="width: 100%; padding: 12px; background: #E50914; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 0.9rem; cursor: pointer;">Submit For Verification</button>
+      <form id="authForm" onsubmit="handleAuth(event)">
+        <input type="text" id="userNameInput" placeholder="Your Name" style="display: none;">
+        <input type="email" id="emailInput" placeholder="Email or Mobile Number" required>
+        <input type="password" id="passInput" placeholder="Password" required>
+        <button type="submit" class="auth-btn" id="authBtn">Sign In</button>
       </form>
     </div>
-  </section>
+  </div>
 
-  <footer>
-    <p>© 2026 AFI.Entertainment — Powered by Action Film Industry Production House</p>
-  </footer>
+  <!-- MAIN OTT PLATFORM APP -->
+  <div class="main-app" id="mainApp">
+    
+    <!-- Top Navbar -->
+    <nav class="navbar">
+      <div class="logo-box">
+        <div class="logo" onclick="location.reload()">AFI.Ent</div>
+        <span class="sub-brand">OTT PLATFORM</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Search..." onkeyup="filterMovies()">
+        <div class="user-profile" id="userDisplayName" onclick="logout()">Profile</div>
+      </div>
+    </nav>
+
+    <!-- Main Hero Banner -->
+    <header class="hero">
+      <span class="hero-badge">AFI FEATURED RELEASE</span>
+      <h1 class="hero-title">Rangbaaz: Deva</h1>
+      <p class="hero-desc">Welcome to official AFI.Entertainment streaming platform. Stream original independent movies, web series & music releases.</p>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" onclick="openPlayer('Rangbaaz: Deva', 'Official Action Thriller Film produced by Action Film Industry.', 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')">▶ Stream Now</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('rules').scrollIntoView({behavior: 'smooth'});">+ Submit Content</button>
+      </div>
+    </header>
+
+    <!-- Content Showcase -->
+    <main class="content-section">
+      
+      <h2 class="row-title">🔥 AFI Originals <span>Featured</span></h2>
+      <div class="cards-row">
+        
+        <div class="poster-card" onclick="openPlayer('Rangbaaz: Deva', 'An intense crime and action drama featuring raw power dynamics.', 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+          <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400" alt="Poster">
+          <div class="poster-overlay">
+            <span class="poster-tag">Original</span>
+            <span class="poster-title">Rangbaaz: Deva</span>
+            <span class="poster-sub">Movie</span>
+          </div>
+        </div>
+
+        <div class="poster-card" onclick="openPlayer('Action Project 1', 'A high-octane independent action thrill project.', 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+          <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400" alt="Poster">
+          <div class="poster-overlay">
+            <span class="poster-tag">Original</span>
+            <span class="poster-title">Action Project 1</span>
+            <span class="poster-sub">Thriller</span>
+          </div>
+        </div>
+
+        <div class="poster-card" onclick="openPlayer('Crime File', 'Uncovering mysteries and real crime cases web series.', 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=400', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+          <img src="https://images.unsplash.com/photo-1518173946687-a4c8a383392e?q=80&w=400" alt="Poster">
+          <div class="poster-overlay">
+            <span class="poster-tag">Series</span>
+            <span class="poster-title">Crime File</span>
+            <span class="poster-sub">Web Series</span>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Video Player Modal -->
+    <div class="modal-backdrop" id="videoModal">
+      <div class="modal-content">
+        <div class="modal-header" id="modalHeaderBg">
+          <button class="modal-close" onclick="closePlayer()">✕</button>
+        </div>
+        <div class="modal-body">
+          <h2 class="modal-title" id="modalTitle">Movie Title</h2>
+          <p class="modal-desc" id="modalDesc">Description goes here...</p>
+          <a id="modalPlayBtn" href="#" target="_blank" class="btn btn-primary" style="width: 100%; text-decoration: none;">▶ Stream / Watch Video</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Creator Submission Section -->
+    <section class="submission-wrapper" id="rules">
+      <h2 style="color: #E50914; font-size: 1.3rem; text-align: center; font-weight: 800;">Submit Your Content</h2>
+      <p style="color: #aaa; text-align: center; font-size: 0.8rem; margin-top: 5px;">Submit Movies, Short Films, or Songs for publishing on AFI.Entertainment.</p>
+      
+      <div class="form-box">
+        <form onsubmit="event.preventDefault(); alert('Submission Received! AFI Admin team will verify and contact you.');">
+          <input type="text" placeholder="Creator / Director Name" required>
+          <select required>
+            <option value="">Select Content Type</option>
+            <option value="movie">Full Movie / Short Film</option>
+            <option value="series">Web Series Episode</option>
+            <option value="song">Song / Music Track</option>
+          </select>
+          <input type="text" placeholder="Content Title" required>
+          <input type="url" placeholder="Video Link (YouTube / Drive)" required>
+          <button type="submit" style="width: 100%; padding: 12px; background: #E50914; color: white; border: none; font-weight: bold; border-radius: 4px; font-size: 0.9rem; cursor: pointer;">Submit Request</button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2026 AFI.Entertainment — Powered by Action Film Industry</p>
+    </footer>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let currentMode = 'login';
+
+    function switchTab(mode) {
+      currentMode = mode;
+      document.getElementById('loginTab').classList.toggle('active', mode === 'login');
+      document.getElementById('signupTab').classList.toggle('active', mode === 'signup');
+      document.getElementById('userNameInput').style.display = mode === 'signup' ? 'block' : 'none';
+      document.getElementById('authBtn').innerText = mode === 'signup' ? 'Create Account' : 'Sign In';
+    }
+
+    function handleAuth(e) {
+      e.preventDefault();
+      let email = document.getElementById('emailInput').value;
+      let name = document.getElementById('userNameInput').value || email.split('@')[0];
+      
+      document.getElementById('userDisplayName').innerText = name;
+      document.getElementById('authOverlay').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+    }
+
+    function logout() {
+      if(confirm("Do you want to log out?")) {
+        location.reload();
+      }
+    }
+
+    function openPlayer(title, desc, imgUrl, videoUrl) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDesc').innerText = desc;
+      document.getElementById('modalHeaderBg').style.backgroundImage = `url('${imgUrl}')`;
+      document.getElementById('modalPlayBtn').href = videoUrl;
+      document.getElementById('videoModal').style.display = 'flex';
+    }
+
+    function closePlayer() {
+      document.getElementById('videoModal').style.display = 'none';
+    }
+
+    function filterMovies() {
+      let input = document.getElementById('searchInput').value.toLowerCase();
+      let cards = document.getElementsByClassName('poster-card');
+      
+      for (i = 0; i < cards.length; i++) {
+        let title = cards[i].getElementsByClassName('poster-title')[0].innerText.toLowerCase();
+        cards[i].style.display = title.includes(input) ? "" : "none";
+      }
+    }
+  </script>
 
 </body>
 </html>
